@@ -1,5 +1,4 @@
-function _pure_prompt_git_dirty
-    --argument-names dirty
+function _pure_prompt_git_dirty --argument-names dirty
     set --local git_dirty_symbol
     set --local git_dirty_color
 

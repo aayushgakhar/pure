@@ -1,5 +1,4 @@
-function _pure_prompt_git_stash
-    --argument-names stash
+function _pure_prompt_git_stash --argument-names stash
     set --local git_stash_symbol
     set --local git_stash_color
 
