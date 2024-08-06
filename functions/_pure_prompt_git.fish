@@ -55,17 +55,23 @@ function _pure_prompt_git \
         
         echo -ns (_pure_prompt_git_branch)
 
+        set -f color_normal $pure_color_mute
+        set -f git_color_operation brred
+        set -f git_color_conflicted brred
+        set -f tide_git_color_upstream brblack
+
         if set -q operation
-            echo -ns ' ' $operation 
+            echo -ns (set_color $git_color_operation) ' ' $operation (set_color $color_normal)
         end
         if set -q step
-            echo -ns ' ' $step/$total_steps
+            echo -ns (set_color $git_color_operation) ' ' $step/$total_steps (set_color $color_normal)
         end
+        echo -ns (_pure_prompt_git_pending_commits $ahead $behind)
         if test $stash -ne 0
             echo -ns (_pure_prompt_git_stash $stash)
         end
         if test $conflicted -ne 0
-            echo -ns ' ~'$conflicted
+            echo -ns (set_color $git_color_conflicted) ' ~'$conflicted (set_color $color_normal)
         end
         if test $staged -ne 0
             echo -ns ' +'$staged
@@ -76,7 +82,7 @@ function _pure_prompt_git \
         if test $untracked -ne 0
             echo -ns ' ?'$untracked
         end
-        echo -ns (_pure_prompt_git_pending_commits $ahead $behind)
+        
 
         # if test (_pure_string_width $git_pending_commits) -ne 0
         #     set --append git_prompt $git_pending_commits
