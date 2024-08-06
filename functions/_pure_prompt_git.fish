@@ -22,12 +22,6 @@ function _pure_prompt_git \
         git rev-parse --git-dir --is-inside-git-dir --short HEAD | read -fL gdir in_gdir location
         test $in_gdir = true && set -l _set_dir_opt -C $gdir/..
         # Suppress errors in case we are in a bare repo or there is no upstream
-        set -l stat (git $_set_dir_opt --no-optional-locks status --porcelain 2>/dev/null)
-        set -l stash (git $_set_dir_opt stash list 2>/dev/null | count)
-        set -l conflicted (string match -r ^UU $stat | count)
-        set -l staged (string match -r ^[ADMR] $stat | count)
-        set -l dirty (string match -r ^.[ADMR] $stat | count)
-        set -l untracked (string match -r '^\?\?' $stat | count)
         git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null | read -f behind ahead
         if test -d $gdir/rebase-merge
             # Turn ANY into ALL, via double negation
@@ -73,6 +67,12 @@ function _pure_prompt_git \
         echo -ns (_pure_prompt_git_pending_commits $ahead $behind)
 
         if test $git_enhanced = true
+            set -l stat (git $_set_dir_opt --no-optional-locks status --porcelain 2>/dev/null)
+            set -l stash (git $_set_dir_opt stash list 2>/dev/null | count)
+            set -l conflicted (string match -r ^UU $stat | count)
+            set -l staged (string match -r ^[ADMR] $stat | count)
+            set -l dirty (string match -r ^.[ADMR] $stat | count)
+            set -l untracked (string match -r '^\?\?' $stat | count)
             if test $stash -ne 0
                 echo -ns (_pure_prompt_git_stash $stash)
             end
@@ -83,13 +83,13 @@ function _pure_prompt_git \
                 echo -ns ' +'$staged
             end
             if test $dirty -ne 0
-                echo -ns (_pure_prompt_git_dirty $dirty)
+                echo -ns ' '$pure_symbol_git_dirty$dirty
             end
             if test $untracked -ne 0
                 echo -ns ' ?'$untracked
             end
         else
-            echo -ns (_pure_prompt_git_dirty '')
+            echo -ns (_pure_prompt_git_dirty)
         end
 
     end
