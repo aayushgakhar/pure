@@ -14,7 +14,7 @@ function _pure_prompt_git \
     set --local is_git_repository (command git rev-parse --is-inside-work-tree 2>/dev/null)
 
     if test -n "$is_git_repository"
-        git rev-parse --git-dir --is-inside-git-dir | read -fL gdir in_gdir
+        git rev-parse --git-dir --is-inside-git-dir --short HEAD | read -fL gdir in_gdir location
         test $in_gdir = true && set -l _set_dir_opt -C $gdir/..
         # Suppress errors in case we are in a bare repo or there is no upstream
         set -l stat (git $_set_dir_opt --no-optional-locks status --porcelain 2>/dev/null)
@@ -53,7 +53,7 @@ function _pure_prompt_git \
             set -f operation bisect
         end
         
-        echo -ns (_pure_prompt_git_branch)
+        echo -ns (_pure_prompt_git_branch $location)
 
         set -f color_normal $pure_color_mute
         set -f git_color_operation brred
@@ -82,11 +82,5 @@ function _pure_prompt_git \
         if test $untracked -ne 0
             echo -ns ' ?'$untracked
         end
-        
-
-        # if test (_pure_string_width $git_pending_commits) -ne 0
-        #     set --append git_prompt $git_pending_commits
-        # end
-        # echo $git_prompt
     end
 end
