@@ -18,14 +18,12 @@ function _pure_prompt_git \
         test $in_gdir = true && set -l _set_dir_opt -C $gdir/..
         # Suppress errors in case we are in a bare repo or there is no upstream
         set -l stat (git $_set_dir_opt --no-optional-locks status --porcelain 2>/dev/null)
-        string match -qr '(0|(?<stash>.*))\n(0|(?<conflicted>.*))\n(0|(?<staged>.*))
-    (0|(?<dirty>.*))\n(0|(?<untracked>.*))(\n(0|(?<behind>.*))\t(0|(?<ahead>.*)))?' \
-            "$(git $_set_dir_opt stash list 2>/dev/null | count
-            string match -r ^UU $stat | count
-            string match -r ^[ADMR] $stat | count
-            string match -r ^.[ADMR] $stat | count
-            string match -r '^\?\?' $stat | count
-            git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null)"
+        set -l stash (git $_set_dir_opt stash list 2>/dev/null | count)
+        set -l conflicted (string match -r ^UU $stat | count)
+        set -l staged (string match -r ^[ADMR] $stat | count)
+        set -l dirty (string match -r ^.[ADMR] $stat | count)
+        set -l untracked (string match -r '^\?\?' $stat | count)
+        git rev-list --count --left-right @{upstream}...HEAD 2>/dev/null | read -f behind ahead
         if test -d $gdir/rebase-merge
             # Turn ANY into ALL, via double negation
             if not path is -v $gdir/rebase-merge/{msgnum,end}
@@ -54,13 +52,35 @@ function _pure_prompt_git \
         else if test -f $gdir/BISECT_LOG
             set -f operation bisect
         end
-        set --local git_prompt (_pure_prompt_git_branch)' '$operation' '$step/$total_steps(_pure_prompt_git_stash $stash)' ~'$conflicted' +'$staged' '(_pure_prompt_git_dirty $dirty)' ?'$untracked
-        set --local git_pending_commits (_pure_prompt_git_pending_commits $ahead $behind)
+        
+        echo -ns (_pure_prompt_git_branch)
 
-        if test (_pure_string_width $git_pending_commits) -ne 0
-            set --append git_prompt $git_pending_commits
+        if set -q operation
+            echo -ns ' ' $operation 
         end
+        if set -q step
+            echo -ns ' ' $step/$total_steps
+        end
+        if test $stash -ne 0
+            echo -ns (_pure_prompt_git_stash $stash)
+        end
+        if test $conflicted -ne 0
+            echo -ns ' ~'$conflicted
+        end
+        if test $staged -ne 0
+            echo -ns ' +'$staged
+        end
+        if test $dirty -ne 0
+            echo -ns (_pure_prompt_git_dirty $dirty)
+        end
+        if test $untracked -ne 0
+            echo -ns ' ?'$untracked
+        end
+        echo -ns (_pure_prompt_git_pending_commits $ahead $behind)
 
-        echo $git_prompt
+        # if test (_pure_string_width $git_pending_commits) -ne 0
+        #     set --append git_prompt $git_pending_commits
+        # end
+        # echo $git_prompt
     end
 end
