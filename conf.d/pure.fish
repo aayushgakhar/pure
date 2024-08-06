@@ -24,6 +24,7 @@ _pure_set_default pure_truncate_prompt_current_directory_keeps -1
 
 # Git
 _pure_set_default pure_enable_git true
+_pure_set_default pure_enable_git_enhanced false
 _pure_set_default pure_symbol_git_unpulled_commits "⇣"
 _pure_set_default pure_symbol_git_unpushed_commits "⇡"
 _pure_set_default pure_symbol_git_dirty "*"

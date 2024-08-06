@@ -7,6 +7,11 @@ function _pure_prompt_git \
         return
     end
 
+    set -f git_enhanced false
+    if set --query pure_enable_git_enhanced
+        set -f git_enhanced $pure_enable_git_enhanced
+    end
+
     if not type -q --no-functions git  # skip git-related features when `git` is not available
         return $ABORT_FEATURE
     end
@@ -58,7 +63,6 @@ function _pure_prompt_git \
         set -f color_normal $pure_color_mute
         set -f git_color_operation brred
         set -f git_color_conflicted brred
-        set -f tide_git_color_upstream brblack
 
         if set -q operation
             echo -ns (set_color $git_color_operation) ' ' $operation (set_color $color_normal)
@@ -67,20 +71,26 @@ function _pure_prompt_git \
             echo -ns (set_color $git_color_operation) ' ' $step/$total_steps (set_color $color_normal)
         end
         echo -ns (_pure_prompt_git_pending_commits $ahead $behind)
-        if test $stash -ne 0
-            echo -ns (_pure_prompt_git_stash $stash)
+
+        if test $git_enhanced = true
+            if test $stash -ne 0
+                echo -ns (_pure_prompt_git_stash $stash)
+            end
+            if test $conflicted -ne 0
+                echo -ns (set_color $git_color_conflicted) ' ~'$conflicted (set_color $color_normal)
+            end
+            if test $staged -ne 0
+                echo -ns ' +'$staged
+            end
+            if test $dirty -ne 0
+                echo -ns (_pure_prompt_git_dirty $dirty)
+            end
+            if test $untracked -ne 0
+                echo -ns ' ?'$untracked
+            end
+        else
+            echo -ns (_pure_prompt_git_dirty '')
         end
-        if test $conflicted -ne 0
-            echo -ns (set_color $git_color_conflicted) ' ~'$conflicted (set_color $color_normal)
-        end
-        if test $staged -ne 0
-            echo -ns ' +'$staged
-        end
-        if test $dirty -ne 0
-            echo -ns (_pure_prompt_git_dirty $dirty)
-        end
-        if test $untracked -ne 0
-            echo -ns ' ?'$untracked
-        end
+
     end
 end
