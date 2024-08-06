@@ -57,6 +57,7 @@ function _pure_prompt_git \
         set -f color_normal $pure_color_mute
         set -f git_color_operation brred
         set -f git_color_conflicted brred
+        set -f git_color_stash cyan
 
         if set -q operation
             echo -ns (set_color $git_color_operation) ' ' $operation (set_color $color_normal)
@@ -74,7 +75,7 @@ function _pure_prompt_git \
             set -l dirty (string match -r ^.[ADMR] $stat | count)
             set -l untracked (string match -r '^\?\?' $stat | count)
             if test $stash -ne 0
-                echo -ns (_pure_prompt_git_stash $stash)
+                echo -ns (set_color $git_color_stash)" "$pure_symbol_git_stash$stash(set_color $color_normal)
             end
             if test $conflicted -ne 0
                 echo -ns (set_color $git_color_conflicted) ' ~'$conflicted (set_color $color_normal)
@@ -90,6 +91,7 @@ function _pure_prompt_git \
             end
         else
             echo -ns (_pure_prompt_git_dirty)
+            echo -ns (_pure_prompt_git_stash)
         end
 
     end

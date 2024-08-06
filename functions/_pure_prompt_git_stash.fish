@@ -1,4 +1,4 @@
-function _pure_prompt_git_stash --argument-names stash
+function _pure_prompt_git_stash
     set --local git_stash_symbol
     set --local git_stash_color
 
@@ -7,7 +7,7 @@ function _pure_prompt_git_stash --argument-names stash
         and echo "true"
     )
     if test -n "$has_stashed_files" # untracked or un-commited files
-        set git_stash_symbol " $pure_symbol_git_stash"$stash
+        set git_stash_symbol " $pure_symbol_git_stash"
         set git_stash_color (_pure_set_color $pure_color_git_stash)
     end
 
