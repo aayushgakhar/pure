@@ -1,5 +1,9 @@
 # About
 
+### :rocket: Versions Support Strategy
+
+{% include 'components/versioning-support-strategy.md' %}
+
 ## :classical_building: License
 
 [MIT][MIT]

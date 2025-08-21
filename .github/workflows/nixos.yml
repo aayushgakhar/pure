@@ -2,6 +2,7 @@ name: Test on NixOS
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   test-nixos:
@@ -10,7 +11,7 @@ jobs:
     strategy:
       matrix:
         version: [
-            { fish: 3.7.0 }, # https://search.nixos.org/packages?show=fish&type=packages&query=fish
+            { fish: 'latest' }, # https://search.nixos.org/packages?show=fish&type=packages&query=fish
           ]
     steps:
       - name: Checkout repo

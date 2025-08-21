@@ -6,8 +6,16 @@
 
 Specify the [`FISH_VERSION`][fish-releases] you want, and the `CMD` executed by the container:
 
-    make build-pure-on FISH_VERSION=3.3.1
-    make dev-pure-on FISH_VERSION=3.3.1 CMD="fishtape tests/*.test.fish"
+    make build-pure-on FISH_VERSION={{ pure.fish_version }}
+    make dev-pure-on FISH_VERSION={{ pure.fish_version }} CMD="fishtape tests/*.test.fish"
+
+!!! tip "Working with NixOS"
+
+    We have targets for `NixOS` called `nix-build-pure-on` and `nix-dev-pure-on`:
+
+    ```sh
+    ❯ make build-pure-on-nix dev-pure-on-nix FISH_VERSION={{ pure.fish_version }}
+    ```
 
 ## Code Conventions
 
@@ -119,3 +127,7 @@ $pure_threshold_command_duration
 ```
 
 [fish-releases]: https://github.com/fish-shell/fish-shell/releases
+
+### Posting on social media
+
+There is a manual workflow to post on social media.
